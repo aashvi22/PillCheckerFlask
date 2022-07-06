@@ -3,8 +3,8 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 import io
-# import tensorflow as tf
-# from tensorflow import keras
+import tensorflow as tf
+from tensorflow import keras
 import numpy as np
 from PIL import Image
 import cv2 as cv
@@ -105,7 +105,8 @@ def record(out):
 
 # end block
 
-# model = keras.models.load_model("nn2.h5")
+model = keras.models.load_model("nn_newdata.h5")
+# model = keras.models.load_model("nn_cheryl_newdata.h5")
 
 
 # def passIntoModel(filearray):
@@ -141,42 +142,44 @@ def passTextIntoModel(filearray):
 
 def passIntoModel(filearray):
 
-    # img = filearray
-    # gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    # threshold, thresh = cv.threshold(gray, 50, 255, cv.THRESH_BINARY)
-    # blurred = cv.GaussianBlur(thresh, (15, 15), 0)
-    # canny = cv.Canny(blurred, 0, 300)
-    # (cnts, _) = cv.findContours(canny.copy(), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-    # coins = img.copy()
-    # counter = 0
-    # class_names = ['Blue-White Capsule', 'Multivitamin', 'Vitamin C', 'White Capsule']
-    # index = 0
-    # for cnt in cnts:
-    #     x, y, w, h = cv.boundingRect(cnt)
-    #     cv.rectangle(coins, (x, y), (x + w, y + h), (0, 255, 0), 2)
-    #     blank = np.zeros(img.shape[:2], dtype='uint8')
-    #     mask = cv.rectangle(blank, (x, y), (x + w, y + h), 255, -1)
-    #     masked = cv.bitwise_and(img, img, mask=mask)
-    #     # cv.imwrite('outputPicName' + str(counter) + '.jpg', masked) #obtain output pics which are the pics with individual pills and the pics are named with this
-    #     # counter = counter + 1
-    #     img6 = cv.resize(masked, (180, 180))
-    #     img6 = cv.cvtColor(img6, cv.COLOR_BGR2RGB)
-    #     img6 = img6[numpy.newaxis, :, :]
-    #     prediction = model.predict(img6)
-    #     answer = class_names[np.argmax(prediction[0])]
-    #     print(index)
-    #     print(answer)
-    #     index = index + 1
+    img = filearray
+    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    threshold, thresh = cv.threshold(gray, 50, 255, cv.THRESH_BINARY)
+    blurred = cv.GaussianBlur(thresh, (15, 15), 0)
+    canny = cv.Canny(blurred, 0, 300)
+    (cnts, _) = cv.findContours(canny.copy(), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    coins = img.copy()
+    counter = 0
+    class_names = ['Blue-White Capsule', 'Multivitamin', 'Vitamin C', 'White Capsule']
+    index = 0
+    answers = []
+    for cnt in cnts:
+        x, y, w, h = cv.boundingRect(cnt)
+        cv.rectangle(coins, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        blank = np.zeros(img.shape[:2], dtype='uint8')
+        mask = cv.rectangle(blank, (x, y), (x + w, y + h), 255, -1)
+        masked = cv.bitwise_and(img, img, mask=mask)
+        # cv.imwrite('outputPicName' + str(counter) + '.jpg', masked) #obtain output pics which are the pics with individual pills and the pics are named with this
+        # counter = counter + 1
+        
+        #if the height is more than the width, then rotate the image by 90 degrees
+        if h > w:
+            masked = cv.rotate(masked, cv.ROTATE_90_CLOCKWISE)
+        
+        #224, 126
+        img6 = cv.resize(masked, (224, 126))
+        img6 = cv.cvtColor(img6, cv.COLOR_BGR2RGB)
+        img6 = img6[numpy.newaxis, :, :]
+        prediction = model.predict(img6)
+        answer = class_names[np.argmax(prediction[0])]
+        print(index)
+        print(answer)
+        index = index + 1
+        answers.append(answer)
 
 
-    # prediction = model.predict(img)
-    # class_names = ['Lacto5', 'Multivitamin', 'Pill1', 'Pill2', 'Pill3', 'Pill4', 'Pill5', 'Pill6', 'VitaminC']
-    # answer = class_names[np.argmax(prediction[0])]
-    # print(answer)
-    # return answer
-
-    filler_result = ['fake pill 1', 'fake pill 2']
-    return filler_result
+    # filler_result = ['fake pill 1', 'fake pill 2']
+    return answers
 
 
 app = Flask(__name__)
@@ -209,7 +212,7 @@ def tasks():
             capture = 1
             print('requests post about to call gen_frames')
             gen_frames()
-        elif request.form.get('click') == 'Capture_Prescription':
+        elif request.form.get('click') == 'Capture Prescription':
             global capture_prescription
             capture_prescription = 1
             print('requests post prescription about to call gen_frames')
