@@ -1,18 +1,93 @@
-<div class="container">
-        <div class="row">
-            <div class="col-lg-8  offset-lg-2">
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Flask app</title>
+<!--    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">-->
+
+<!--      top gradient: #5da88c-->
+<!--      bottom gradient: #ddfff2-->
+    <style>
+
+        body {
+            background: rgb(75,134,112);
+            background: linear-gradient(180deg, rgba(75,134,112,1) 0%, rgba(221,255,242,1) 100%);
+            margin: auto;
+            justify-content: center;
+            min-height: 700px;
+        }
+
+        h1 {
+          text-align: center;
+          font-family: arial;
+          color: #4b8670;
+        }
+        h2 {
+          text-align: center;
+          font-family: arial;
+          color: white;
+        }
+
+        .videofeed {
+            height: 60%;
+            width: 60%;
+            justify-content: center;
+            display: block;
+          margin-left: auto;
+          margin-right: auto;
+          margin-top: 20px;
+          margin-bottom:20px;
+        }
+
+        .button_container {
+            justify-content: center;
+            padding-left: 30%;
+        }
+        .button {
+           background-color: white;
+          border: none;
+          color: #4b8670;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          border-radius: 12px;
+          margin-left: 20px;
+        }
+        .button:hover {
+          background-color: #4b8670;
+          color: white;
+        }
 
 
-                <h2 class="mt-5">CAMERA APP</h2>
-                <form method="post" action="http://127.0.0.1:5000/requests">
-                <input type="submit" value="Stop/Start" name="stop" />
-                <input type="submit" value="Capture" name="click"/>
+    </style>
+  </head>
+  <body>
 
-                <input type="submit" value="Start/Stop Recording" name="rec" />
-                </form>
-                <img src="http://127.0.0.1:5000/video_feed" height="80%">
-                <h1>Result: {{results}}</h1>
+    <div class="container">
+            <div class="row">
+                <div class="col-lg-8  offset-lg-2">
 
+                    <h2 class="mt-5">CAMERA APP</h2>
+
+                    <form method="post" action="http://127.0.0.1:5000/requests">
+                        <div class = "button_container">
+                            <input class = "button" type="submit" value="Stop/Start" name="stop" />
+                            <input class = "button" type="submit" value="Capture" name="click"/>
+                            <input class = "button" type="submit" value="Capture_Prescription" name="click"/>
+<!--                            <input type="submit" value="Start/Stop Recording" name="rec" />-->
+                        </div>
+
+                    </form>
+                    <img class = "videofeed" src="http://127.0.0.1:5000/video_feed" height="80%">
+                    <h1>Prescription Result: {{results_prescription}}</h1>
+                    <h1>Result: {{results}}</h1>
+
+                </div>
             </div>
-        </div>
-</div>
+    </div>
+
+  </body>
+</html>
+
+
