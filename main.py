@@ -217,24 +217,11 @@ def tasks():
             capture_prescription = 1
             print('requests post prescription about to call gen_frames')
             gen_frames()
-        elif request.form.get('grey') == 'Grey':
-            global grey
-            grey = not grey
-        elif request.form.get('neg') == 'Negative':
-            global neg
-            neg = not neg
-        elif request.form.get('face') == 'Face Only':
-            global face
-            face = not face
-            if (face):
-                time.sleep(4)
         elif request.form.get('stop') == 'Stop/Start':
-
             if (switch == 1):
                 switch = 0
                 camera.release()
                 cv.destroyAllWindows()
-
             else:
                 camera = cv.VideoCapture(0)
                 switch = 1
